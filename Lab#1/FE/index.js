@@ -19,6 +19,11 @@ function fetchEmployees() {
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
         deleteButton.classList.add('btn', 'btn-danger', 'btn-sm');
+
+        deleteButton.addEventListener('click', () => {
+          deleteEmployee(item.id)
+        })
+
         deleteCell.appendChild(deleteButton);
 
         row.appendChild(deleteCell)
@@ -32,6 +37,10 @@ function fetchEmployees() {
 // TODO
 // add event listener to submit button
 
+document.getElementById('employeeForm').addEventListener('submit', () => {
+  createEmployee()
+})
+
 // TODO
 // add event listener to delete button
 
@@ -40,13 +49,36 @@ function createEmployee (){
   // get data from input field
   // send data to BE
   // call fetchEmployees
+  const name = document.getElementById('name').value
+  const id = document.getElementById('id').value
+
+  fetch('http://localhost:3000/api/v1/employee', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id, name }),
+  })
+    .then(response => response.json())
+    .then(() => {
+      fetchEmployees()
+    })
+    .catch(error => console.error(error))
 }
 
 // TODO
-function deleteEmployee (){
+function deleteEmployee (id){
   // get id
   // send id to BE
   // call fetchEmployees
+  fetch(`http://localhost:3000/api/v1/employee/${id}`, {
+    method: 'DELETE',
+  })
+    .then(response => response.json())
+    .then(() => {
+      fetchEmployees()
+    })
+    .catch(error => console.error(error))
 }
 
 fetchEmployees()
